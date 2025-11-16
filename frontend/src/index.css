@@ -1,0 +1,278 @@
+.leaflet-popup-content {
+  font-size: 13px;
+  line-height: 1.4;
+}
+.leaflet-popup-content form input,
+.leaflet-popup-content form textarea,
+.leaflet-popup-content form select {
+  font-size: 13px;
+}
+/* 🌐 Style global SafeRoute */
+
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Barre de navigation */
+.navbar {
+  background: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease-in-out;
+}
+
+.navbar .navbar-brand {
+  font-weight: 700;
+  color: #0d6efd !important;
+  font-size: 1.25rem;
+}
+
+.navbar .nav-link {
+  font-weight: 500;
+  margin-right: 15px;
+  color: #555 !important;
+  transition: color 0.2s;
+}
+
+.navbar .nav-link:hover {
+  color: #0d6efd !important;
+}
+
+.navbar .btn-outline-danger {
+  border-radius: 8px;
+}
+
+/* Cartes de connexion / inscription */
+
+
+
+
+
+/* Titres */
+h2, h3, h4 {
+  font-weight: 700;
+  color: #0d6efd;
+}
+
+/* Formulaires */
+.form-control {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  box-shadow: none;
+  transition: border 0.2s;
+}
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.1rem rgba(13, 110, 253, 0.25);
+}
+
+/* Carte Leaflet */
+.leaflet-container {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Pied de page */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #fff;
+  box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.05);
+  color: #666;
+  font-size: 0.9rem;
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Centrer verticalement le contenu sur la page */
+.page-center {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Carte d'auth élargie */
+.auth-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 550px;
+  transition: all 0.3s ease;
+}
+
+/* Bouton plus grand */
+.btn-primary {
+  font-size: 1.05rem;
+  padding: 10px;
+}
+.btn-primary:hover {
+  background-color: #0b5ed7 !important;
+}
+
+/* Espacement entre les champs */
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table th {
+  background-color: #0d6efd;
+  color: white;
+  text-align: center;
+}
+
+.table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.auth-card:hover {
+  transform: translateY(-3px);
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Carte encadrée */
+.map-frame {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* Lorsque la MapView interne a height:100% elle s'adapte au container */
+.map-frame .leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+  border-radius: 12px;
+}
+
+/* Bouton flottant son / mute */
+.sound-toggle {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  z-index: 999;
+  border-radius: 10px;
+  padding: 8px 10px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+.page-center {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-title {
+  font-weight: 700;
+  font-size: 2.4rem;
+  color: #2c3e50;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: #555;
+  margin-top: 0.5rem;
+}
+
+.btn-primary {
+  background-color: #4a6cf7;
+  border: none;
+  transition: transform 0.2s;
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  background-color: #3653c5;
+}
+body {
+  background-color: #f3f7fc;
+  font-family: "Poppins", sans-serif;
+}
+
+.hero-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #007bff;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+.btn {
+  border-radius: 10px !important;
+  padding: 0.6rem 1.4rem !important;
+  font-weight: 500;
+}
+.card {
+  border: none !important;
+  border-radius: 16px !important;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dashboard-container {
+  font-family: "Poppins", sans-serif;
+}
+
+.chart-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.filter-card label {
+  font-weight: 500;
+  color: #555;
+}
+
+.btn-primary {
+  background: #007bff !important;
+  border: none !important;
+  border-radius: 10px !important;
+}
