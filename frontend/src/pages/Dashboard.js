@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
-  PieChart, Pie, Cell, Legend, LineChart, Line
+  PieChart, Pie, Cell, Legend, LineChart, Line,ResponsiveContainer
 } from "recharts";
-import "../index.css";
 
 function Dashboard() {
   const [zones, setZones] = useState([]);
@@ -46,21 +45,16 @@ function Dashboard() {
         count: byDate[d],
       }));
 
-      const byCity = {
-        Tunis: data.filter((z) => z.title.toLowerCase().includes("tunis")).length,
-        Sfax: data.filter((z) => z.title.toLowerCase().includes("sfax")).length,
-        Sousse: data.filter((z) => z.title.toLowerCase().includes("sousse")).length,
-        Bizerte: data.filter((z) => z.title.toLowerCase().includes("bizerte")).length,
-      };
-
-      const cityData = Object.keys(byCity).map((c) => ({
-        city: c,
-        count: byCity[c],
-      }));
+       const allCities = [...new Set(data.map((z) => z.city).filter(Boolean))];
+    const cityData = allCities.map((city) => ({
+      city,
+      count: data.filter((z) => z.city === city).length,
+    }));
 
       setStats({ totalZones: data.length, types, chartData, cityData });
+
     } catch (error) {
-      console.error("Erreur lors du chargement des stats :", error);
+      console.error("Erreur lors du chargement :", error);
     }
   };
 
@@ -68,129 +62,146 @@ function Dashboard() {
     fetchZones();
   }, []);
 
-  if (!stats) return <div className="text-center mt-5">Chargement du tableau de bord...</div>;
+if (!token) {
+  return (
+    <div className="text-center py-10 text-xl mt-12">
+      Vous devez être connecté pour voir le dashboard.
+    </div>
+  );
+}
 
-  const COLORS = ["#007bff", "#ff4c4c", "#ffc107", "#28a745"];
+if (!stats) {
+  return (
+    <div className="text-center py-10 text-xl mt-12">
+      Chargement...
+    </div>
+  );
+}
+
+
+  const COLORS = ["#3b82f6", "#ef4444", "#facc15", "#22c55e"];
   const typeData = Object.keys(stats.types).map((key) => ({
     name: key,
     value: stats.types[key],
   }));
 
   return (
-    <div
-      className="dashboard-container"
-      style={{
-        background: "linear-gradient(135deg, #f5f8ff 0%, #e9f0ff 100%)",
-        minHeight: "100vh",
-        padding: "2rem 3rem",
-      }}
-    >
-      <h2 className="text-center text-primary mb-5 fw-bold animate__animated animate__fadeInDown">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-8 mt-12">
+      
+      <h2 className="text-center text-3xl font-bold text-blue-600 mb-10">
         📊 Tableau de bord — SafeRoute
       </h2>
 
-      {/* Filtres */}
-      <form className="filter-card mb-5 p-4 rounded shadow-sm bg-white">
-        <div className="row g-3 align-items-end">
-          <div className="col-md-3">
-            <label>Utilisateur</label>
+      {/* Filtres 
+      <div className="bg-white rounded-xl shadow p-6 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div>
+            <label className="block text-sm font-medium">Utilisateur</label>
             <input
               type="text"
-              className="form-control"
+              className="mt-1 w-full border rounded-lg px-3 py-2"
               value={userFilter}
               onChange={(e) => setUserFilter(e.target.value)}
               placeholder="Nom d'utilisateur"
             />
           </div>
-          <div className="col-md-3">
-            <label>Date début</label>
+
+          <div>
+            <label className="block text-sm font-medium">Date début</label>
             <input
               type="date"
-              className="form-control"
+              className="mt-1 w-full border rounded-lg px-3 py-2"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
             />
           </div>
-          <div className="col-md-3">
-            <label>Date fin</label>
+
+          <div>
+            <label className="block text-sm font-medium">Date fin</label>
             <input
               type="date"
-              className="form-control"
+              className="mt-1 w-full border rounded-lg px-3 py-2"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
-          <div className="col-md-3">
-            <button
-              type="button"
-              onClick={fetchZones}
-              className="btn btn-primary w-100"
-            >
-              🔍 Filtrer
-            </button>
-          </div>
+
+          <button
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg px-4 py-2 mt-6"
+            onClick={fetchZones}
+          >
+            🔍 Filtrer
+          </button>
         </div>
-      </form>
+      </div>*/}
 
       {/* Grille des graphiques */}
-      <div className="row g-4">
-        {/* Ligne 1 */}
-        <div className="col-md-6">
-          <div className="chart-card">
-            <h5 className="text-center mb-3">📊 Répartition par type</h5>
-            <PieChart width={450} height={280}>
-              <Pie
-                data={typeData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={110}
-                dataKey="value"
-              >
-                {typeData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        {/* Pie chart */}
+   <div className="bg-white rounded-xl shadow p-6 w-full">
+  <h5 className="text-center font-semibold mb-4">📊 Répartition par type</h5>
+
+  <div className="w-full h-[280px]">
+    <ResponsiveContainer>
+      <PieChart>
+        <Pie
+          data={typeData}
+          cx="50%"
+          cy="50%"
+          outerRadius={100}
+          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+          dataKey="value"
+        >
+          {typeData.map((_, i) => (
+            <Cell key={i} fill={COLORS[i % COLORS.length]} />
+          ))}
+        </Pie>
+        <Tooltip />
+        <Legend />
+      </PieChart>
+    </ResponsiveContainer>
+  </div>
+</div>
+
+
+
+
+
+        {/* Line chart */}
+        <div className="bg-white rounded-xl shadow p-6">
+          <h5 className="text-center font-semibold mb-4">📈 Évolution des signalements</h5>
+          <LineChart width={450} height={280} data={stats.chartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} />
+          </LineChart>
         </div>
 
-        <div className="col-md-6">
-          <div className="chart-card">
-            <h5 className="text-center mb-3">📈 Évolution des signalements</h5>
-            <LineChart width={500} height={280} data={stats.chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="count" stroke="#007bff" strokeWidth={2} />
-            </LineChart>
-          </div>
-        </div>
+        {/* Total zones */}
+       {/* Total zones */}
+<div className="bg-white rounded-xl w-full shadow p-6 text-center flex flex-col justify-center col-span-2">
+  <h5 className="text-lg font-semibold">Total des zones signalées</h5>
+  <h1 className="text-5xl font-extrabold text-green-600 mt-4">
+    {stats.totalZones}
+  </h1>
+</div>
 
-        {/* Ligne 2 */}
-        <div className="col-md-6">
-          <div className="chart-card d-flex flex-column align-items-center justify-content-center">
-            <h5 className="mb-3 text-center">Total des zones signalées</h5>
-            <h1 className="display-4 text-success fw-bold">{stats.totalZones}</h1>
-          </div>
-        </div>
 
-        <div className="col-md-6">
-          <div className="chart-card">
-            <h5 className="text-center mb-3">🏙️ Répartition par région</h5>
-            <BarChart width={500} height={280} data={stats.cityData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="city" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="count" fill="#28a745" barSize={40} />
-            </BarChart>
-          </div>
+        {/* Bar chart 
+        <div className="bg-white rounded-xl shadow p-6">
+          <h5 className="text-center font-semibold mb-4">🏙️ Répartition par région</h5>
+          <BarChart width={450} height={280} data={stats.cityData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="city" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="count" fill="#22c55e" barSize={40} />
+          </BarChart>
         </div>
+        */}
       </div>
     </div>
   );

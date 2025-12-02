@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .leaflet-popup-content {
   font-size: 13px;
   line-height: 1.4;

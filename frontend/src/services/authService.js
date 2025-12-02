@@ -24,3 +24,20 @@ export const logoutUser = () => {
 
 export const getToken = () => localStorage.getItem("access");
 export const isAuthenticated = () => !!getToken();
+const authHeaders = () => ({
+  headers: {
+    Authorization: `Bearer ${getToken()}`,
+  },
+});
+
+// Récupérer les informations du profil de l'utilisateur
+export const getUserProfile = async () => {
+  const response = await axios.get(API_URL + "profile/", authHeaders());
+  return response.data;
+};
+
+// Mettre à jour le profil de l'utilisateur
+export const updateUserProfile = async (userData) => {
+  const response = await axios.put(API_URL + "profile/", userData, authHeaders());
+  return response.data;
+};

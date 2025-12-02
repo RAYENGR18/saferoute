@@ -16,7 +16,7 @@ function Home() {
     >
       {/* En-tête */}
       <div
-        className="text-center mb-4 animate__animated animate__fadeInDown"
+        className="text-center mb-4 animate__animated animate__fadeInDown mt-10"
         style={{
           background: "#fff",
           padding: "1rem",
@@ -57,7 +57,7 @@ function Home() {
           <MapView />
         </div>
 
-        <div className="d-flex gap-3 mt-4">
+        {/*<div className="d-flex gap-3 mt-4">
           <button
             className="btn btn-outline-primary"
             onClick={() => setShowMap((prev) => !prev)}
@@ -76,6 +76,7 @@ function Home() {
             Autorisez la géolocalisation pour recevoir des alertes en temps réel 🔔.
           </small>
         </p>
+        */}
       </div>
     </div>
   );

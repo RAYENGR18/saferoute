@@ -7,6 +7,8 @@ services:
     env_file: .env
     ports:
       - "8000:8000"
+    volumes:
+      - .:/app
     restart: always
 
   frontend:
@@ -16,6 +18,9 @@ services:
     container_name: saferoute-frontend
     ports:
       - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     stdin_open: true
     tty: true
     restart: always
