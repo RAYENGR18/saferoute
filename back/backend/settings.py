@@ -19,6 +19,7 @@ if not SECRET_KEY:
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv(
+    "back-umber-seven.vercel.app",
     "ALLOWED_HOSTS",
     ".vercel.app"
 ).split(",")
