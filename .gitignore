@@ -28,8 +28,6 @@ frontend/node_modules/
 # =====================
 docker-compose.yml
 docker-compose.*.yml
-
-back/backend/Dockerfile
 frontend/Dockerfile
 
 # =====================
