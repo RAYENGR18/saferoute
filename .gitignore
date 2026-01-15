@@ -1,9 +1,53 @@
+# =====================
+# Environment variables
+# =====================
 .env
 *.env
-*.pyc
+
+# =====================
+# Python / Django
+# =====================
 __pycache__/
-node_modules/
-frontend/node_modules/
-backend/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+
 venv/
 .venv/
+
+# =====================
+# Node / Frontend
+# =====================
+node_modules/
+frontend/node_modules/
+
+# =====================
+# Docker (IGNORED volontairement)
+# =====================
+docker-compose.yml
+docker-compose.*.yml
+
+back/backend/Dockerfile
+frontend/Dockerfile
+
+# =====================
+# Build / Data
+# =====================
+data/
+dist/
+build/
+
+# =====================
+# OS / IDE
+# =====================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# =====================
+# Misc
+# =====================
+scripts/
