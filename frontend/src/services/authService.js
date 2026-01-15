@@ -1,43 +1,56 @@
 // src/services/authService.js
-import axios from "axios";
+import api from "./api";
 
-const API_URL = "http://127.0.0.1:8000/api/";
+// ==========================
+// AUTHENTIFICATION
+// ==========================
 
 export const loginUser = async (username, password) => {
-  const response = await axios.post(API_URL + "token/", { username, password });
-  if (response.data.access) {
+  const response = await api.post("/api/token/", {
+    username,
+    password,
+  });
+
+  // Sauvegarde des tokens
+  if (response.data.access && response.data.refresh) {
     localStorage.setItem("access", response.data.access);
     localStorage.setItem("refresh", response.data.refresh);
   }
+
   return response.data;
 };
 
-export const registerUser = async (username, password) => {
-  const response = await axios.post(API_URL + "register/", { username, password });
+export const registerUser = async (userData) => {
+  const response = await api.post("/api/register/", userData);
   return response.data;
 };
 
 export const logoutUser = () => {
   localStorage.removeItem("access");
   localStorage.removeItem("refresh");
+
+  // Optionnel : redirection centralisée
+  window.location.href = "/login";
 };
 
-export const getToken = () => localStorage.getItem("access");
-export const isAuthenticated = () => !!getToken();
-const authHeaders = () => ({
-  headers: {
-    Authorization: `Bearer ${getToken()}`,
-  },
-});
+// ==========================
+// UTILITAIRES
+// ==========================
 
-// Récupérer les informations du profil de l'utilisateur
+export const getToken = () => localStorage.getItem("access");
+
+export const isAuthenticated = () => Boolean(getToken());
+
+// ==========================
+// PROFIL UTILISATEUR
+// ==========================
+
 export const getUserProfile = async () => {
-  const response = await axios.get(API_URL + "profile/", authHeaders());
+  const response = await api.get("/api/profile/");
   return response.data;
 };
 
-// Mettre à jour le profil de l'utilisateur
 export const updateUserProfile = async (userData) => {
-  const response = await axios.put(API_URL + "profile/", userData, authHeaders());
+  const response = await api.put("/api/profile/", userData);
   return response.data;
 };

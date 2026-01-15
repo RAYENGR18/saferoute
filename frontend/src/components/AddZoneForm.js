@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axiosInstance from "../services/axiosInstance";
-import { getToken } from "../services/authService";
+import api from "../services/api";
 
 function AddZoneForm({ onZoneAdded, selectedCoords }) {
   const [formData, setFormData] = useState({
@@ -13,38 +12,43 @@ function AddZoneForm({ onZoneAdded, selectedCoords }) {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // Mise à jour des coordonnées sélectionnées
   useEffect(() => {
     if (selectedCoords) {
-      setFormData({
-        ...formData,
+      setFormData((prev) => ({
+        ...prev,
         latitude: selectedCoords.latitude,
         longitude: selectedCoords.longitude,
-      });
+      }));
     }
   }, [selectedCoords]);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
-    const token = getToken();
-    if (!token) {
-      setError("Veuillez vous connecter avant d’ajouter une zone.");
-      return;
-    }
+    setLoading(true);
 
     try {
-      const response = await axiosInstance.post("dangerzones/", formData);
+      const response = await api.post("/api/dangerzones/", {
+        title: formData.title,
+        description: formData.description,
+        danger_type: formData.danger_type,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+      });
+
       setSuccess("Zone ajoutée avec succès ✅");
+
       setFormData({
         title: "",
         description: "",
@@ -52,16 +56,32 @@ function AddZoneForm({ onZoneAdded, selectedCoords }) {
         latitude: "",
         longitude: "",
       });
-      if (onZoneAdded) onZoneAdded(response.data);
+
+      if (onZoneAdded) {
+        onZoneAdded(response.data);
+      }
+
+      // Nettoyer le message succès après 3s
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       console.error("Erreur backend :", err.response?.data || err.message);
-      setError("Erreur lors de l’ajout de la zone ❌");
+
+      if (err.response?.status === 401) {
+        setError("Session expirée. Veuillez vous reconnecter.");
+      } else {
+        setError("Erreur lors de l’ajout de la zone ❌");
+      }
+
+      setTimeout(() => setError(""), 4000);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="card p-3 shadow-sm mt-3">
       <h5>➕ Ajouter une nouvelle zone dangereuse</h5>
+
       {error && <div className="alert alert-danger mt-2">{error}</div>}
       {success && <div className="alert alert-success mt-2">{success}</div>}
 
@@ -75,6 +95,7 @@ function AddZoneForm({ onZoneAdded, selectedCoords }) {
             onChange={handleChange}
             className="form-control"
             required
+            disabled={loading}
           />
         </div>
 
@@ -85,6 +106,7 @@ function AddZoneForm({ onZoneAdded, selectedCoords }) {
             value={formData.description}
             onChange={handleChange}
             className="form-control"
+            disabled={loading}
           />
         </div>
 
@@ -95,6 +117,7 @@ function AddZoneForm({ onZoneAdded, selectedCoords }) {
             value={formData.danger_type}
             onChange={handleChange}
             className="form-select"
+            disabled={loading}
           >
             <option value="accident">Accident</option>
             <option value="agression">Agression</option>
@@ -114,6 +137,7 @@ function AddZoneForm({ onZoneAdded, selectedCoords }) {
               step="0.000001"
               className="form-control"
               required
+              disabled={loading}
             />
           </div>
           <div className="col">
@@ -126,12 +150,17 @@ function AddZoneForm({ onZoneAdded, selectedCoords }) {
               step="0.000001"
               className="form-control"
               required
+              disabled={loading}
             />
           </div>
         </div>
 
-        <button type="submit" className="btn btn-success mt-3 w-100">
-          Ajouter la zone
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn btn-success mt-3 w-100"
+        >
+          {loading ? "Ajout en cours..." : "Ajouter la zone"}
         </button>
       </form>
     </div>

@@ -8,10 +8,10 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import axios from "axios";
 import L from "leaflet";
 import Swal from "sweetalert2";
 import "animate.css";
+import api from "../services/api";
 
 // Icônes personnalisées
 const userIcon = new L.Icon({
@@ -48,6 +48,7 @@ function AddZoneOnClick({ onAdd }) {
           const title = document.getElementById("title").value;
           const description = document.getElementById("desc").value;
           const danger_type = document.getElementById("type").value;
+
           if (!title) {
             Swal.showValidationMessage("Le titre est requis");
             return false;
@@ -61,6 +62,7 @@ function AddZoneOnClick({ onAdd }) {
       });
     },
   });
+
   return null;
 }
 
@@ -68,8 +70,8 @@ function MapView() {
   const [zones, setZones] = useState([]);
   const [userPosition, setUserPosition] = useState(null);
   const [alertZone, setAlertZone] = useState(null);
-  const token = localStorage.getItem("access");
   const [soundAllowed, setSoundAllowed] = useState(false);
+
   const getZoneColor = (type) => {
     switch (type) {
       case "accident":
@@ -80,18 +82,16 @@ function MapView() {
         return "purple";
       default:
         return "gray";
-    }};
-    
+    }
+  };
 
   // Charger les zones
   const fetchZones = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/dangerzones/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get("/api/dangerzones/");
       setZones(res.data);
     } catch (error) {
-      console.error("Erreur chargement zones:", error);
+      console.error("Erreur chargement zones :", error);
     }
   };
 
@@ -112,22 +112,16 @@ function MapView() {
     }
   }, []);
 
-  // Ajout d’une nouvelle zone
+  // Ajouter une zone
   const handleAddZone = async (lat, lng, { title, description, danger_type }) => {
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/dangerzones/",
-        {
-          title,
-          description,
-          danger_type,
-          latitude: lat,
-          longitude: lng,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await api.post("/api/dangerzones/", {
+        title,
+        description,
+        danger_type,
+        latitude: lat,
+        longitude: lng,
+      });
 
       Swal.fire({
         icon: "success",
@@ -137,7 +131,7 @@ function MapView() {
         showConfirmButton: false,
       });
 
-      fetchZones(); // rafraîchir la carte
+      fetchZones();
     } catch (error) {
       console.error("Erreur création zone :", error);
       Swal.fire({
@@ -148,7 +142,7 @@ function MapView() {
     }
   };
 
-  // Calcul distance
+  // Calcul distance (Haversine)
   const getDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3;
     const φ1 = (lat1 * Math.PI) / 180;
@@ -164,7 +158,7 @@ function MapView() {
     return R * c;
   };
 
-  // Détection GPS automatique
+  // Détection de proximité
   useEffect(() => {
     if (userPosition && zones.length > 0) {
       const nearZone = zones.find((z) => {
@@ -174,11 +168,12 @@ function MapView() {
           z.latitude,
           z.longitude
         );
-        return d <= 300; // rayon 300m
+        return d <= 300;
       });
 
       if (nearZone && nearZone !== alertZone) {
         setAlertZone(nearZone);
+
         Swal.fire({
           icon: "warning",
           title: "⚠️ Zone dangereuse détectée",
@@ -189,46 +184,42 @@ function MapView() {
           `,
           background: "#fff7e6",
           confirmButtonColor: "#d33",
-          confirmButtonText: "OK",
           timer: 6000,
           timerProgressBar: true,
         });
+
         if (soundAllowed) {
-        const audio = new Audio(process.env.PUBLIC_URL + "/alert.mp3");
-        audio.volume = 1.0;
-        audio.play()
-            .then(() => console.log("🔊 Alerte sonore jouée"))
-            .catch((err) => console.warn("⚠️ Lecture bloquée :", err));
+          const audio = new Audio("/alert.mp3");
+          audio.play().catch(() => {});
         }
 
-if (navigator.vibrate) navigator.vibrate([300, 200, 300]);
-
+        if (navigator.vibrate) navigator.vibrate([300, 200, 300]);
       }
     }
-  }, [userPosition, zones, alertZone]);
+  }, [userPosition, zones, alertZone, soundAllowed]);
 
   return (
     <div
-    style={{
+      style={{
         height: "90vh",
         width: "100%",
         borderRadius: "20px",
         overflow: "hidden",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.2)"
-  }}
->
-
+        boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+      }}
+    >
       <MapContainer
         center={[36.8065, 10.1815]}
         zoom={13}
         style={{ height: "100%", width: "100%" }}
         whenReady={() => {
-            // Autoriser le son après la première interaction utilisateur
-            document.addEventListener("click", () => setSoundAllowed(true), { once: true });
+          document.addEventListener(
+            "click",
+            () => setSoundAllowed(true),
+            { once: true }
+          );
         }}
-        
->
-
+      >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -246,7 +237,6 @@ if (navigator.vibrate) navigator.vibrate([300, 200, 300]);
               center={userPosition}
               radius={300}
               color="blue"
-              fillColor="blue"
               fillOpacity={0.1}
             />
           </>
@@ -254,28 +244,26 @@ if (navigator.vibrate) navigator.vibrate([300, 200, 300]);
 
         {/* Zones dangereuses */}
         {zones.map((zone) => (
-    <React.Fragment key={zone.id}>
-        <Marker
-        position={[zone.latitude, zone.longitude]}
-        icon={dangerIcon}
-        >
-        <Popup>
-            <b>{zone.title}</b> <br />
-            {zone.description} <br />
-            <i>Type : {zone.danger_type}</i>
-        </Popup>
-        </Marker>
+          <React.Fragment key={zone.id}>
+            <Marker
+              position={[zone.latitude, zone.longitude]}
+              icon={dangerIcon}
+            >
+              <Popup>
+                <b>{zone.title}</b><br />
+                {zone.description}<br />
+                <i>Type : {zone.danger_type}</i>
+              </Popup>
+            </Marker>
 
-        {/* 🔵 Cercle coloré selon type */}
-        <Circle
-        center={[zone.latitude, zone.longitude]}
-        radius={150}
-        color={getZoneColor(zone.danger_type)}
-        fillOpacity={0.3}
-        />
-    </React.Fragment>
-    ))}
-
+            <Circle
+              center={[zone.latitude, zone.longitude]}
+              radius={150}
+              color={getZoneColor(zone.danger_type)}
+              fillOpacity={0.3}
+            />
+          </React.Fragment>
+        ))}
       </MapContainer>
     </div>
   );
