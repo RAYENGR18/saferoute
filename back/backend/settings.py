@@ -48,14 +48,16 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # 👈 ICI (très important)
+
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
 
 # ======================================================
 # URL / WSGI
@@ -127,10 +129,11 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_HEADERS = [
-    "accept",
     "authorization",
     "content-type",
+    "accept",
     "origin",
+    "user-agent",
     "x-csrftoken",
     "x-requested-with",
 ]
@@ -141,6 +144,7 @@ CORS_ALLOW_HEADERS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "https://saferoute01.vercel.app",
+    "https://saferoute01-git-main-rayens-projects-af336a47.vercel.app",
     "https://*.vercel.app",
 ]
 
