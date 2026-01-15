@@ -20,7 +20,7 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    ".vercel.app,.railway.app,localhost,127.0.0.1"
+    ".vercel.app"
 ).split(",")
 
 # ======================================================
