@@ -15,16 +15,11 @@ function Profile() {
 
   // Récupérer les infos du backend
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const data = await getUserProfile();
-        setFormData(data);
-      } catch (error) {
-        setMessage("Impossible de charger le profil.");
-      }
-    };
-    fetchProfile();
-  }, []);
+  const interval = setInterval(() => {
+    getUserProfile(); // ❌ appel API en boucle infinie
+  }, 1000);
+
+}, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
