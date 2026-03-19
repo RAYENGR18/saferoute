@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
 
-function Login() {
+async function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -16,14 +16,19 @@ function Login() {
 
     try {
       await loginUser(username, password);
-      setMessage("Connexion réussie ! Redirection...");
-      setTimeout(() => navigate("/"), 1200);
+       await loginUser(username, password);
+  navigate("/"); // 
+    
+  console.log("PASSWORD:", password);
     } catch (error) {
       setMessage("Identifiants incorrects");
     } finally {
       setIsLoading(false);
     }
   };
+
+ 
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100 flex items-center justify-center px-4">

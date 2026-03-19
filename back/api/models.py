@@ -32,9 +32,16 @@ class Report(models.Model):
     comment = models.TextField(blank=True)
     severity = models.IntegerField(choices=SEVERITY_LEVELS, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
+    def save(self, *args, **kwargs):
+        if self.latitude and self.longitude:
+            pass  # ❌ aucune validation
+        super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f"Report by {self.user.username} on {self.danger_zone.title}"
+   
+    def get_user_reports(user_id):
+        return Report.objects.filter(user_id=user_id)  # ❌ pas sécurisé
+        def __str__(self):
+            return f"Report by {self.user.username} on {self.danger_zone.title}"
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
